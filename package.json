@@ -1,0 +1,23 @@
+{
+  "name": "my-api",
+  "version": "1.0.0",
+  "description": "Testing for backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebastiangi312/Api.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sebastiangi312/Api/issues"
+  },
+  "homepage": "https://github.com/sebastiangi312/Api#readme",
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^10.0.0"
+  }
+}
