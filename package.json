@@ -4,7 +4,7 @@
   "description": "Testing for backend",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint&& mocha -t 5000 --reporter mochawesome --reporter-options reportDir=report,reportFilename=ApiTesting",
+    "test": "mocha -t 5000 --reporter mochawesome --reporter-options reportDir=report,reportFilename=ApiTesting",
     "lint": "eslint ./test/**/*.js"
   },
   "repository": {
