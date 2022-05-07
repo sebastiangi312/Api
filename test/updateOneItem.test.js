@@ -2,22 +2,23 @@ const agent = require('superagent');
 const statusCode = require('http-status-codes');
 const { expect } = require('chai').use(require('chai-json-schema'));
 
-const urlBase = 'http://localhost';
-const api = 'api/items';
-let oldData = [];
+const apiURL = 'http://localhost:8080/api/items';
+const oldData = [];
 
 describe('/:id Update', () => {
-  beforeEach('Back up old data', async () => {
-    oldData = [];
-
-    const { body } = await agent.get(`${urlBase}:8080/${api}`);
-    for (const item of body) {
-      const oldItem = await agent.delete(`${urlBase}:8080/${api}/${item.id}`);
+  before('', async () => {
+    const { body } = await agent.get(`${apiURL}`);
+    body.forEach(async (item) => {
+      const oldItem = await agent.delete(`${apiURL}/${item.id}`);
       oldData.push(oldItem.body);
-    }
+    });
+  });
 
-    const resp = await agent.get(`${urlBase}:8080/${api}`);
-    expect(resp.body.length).equal(0);
+  beforeEach('Back up old data', async () => {
+    const { body } = await agent.get(`${apiURL}`);
+    body.forEach(async (item) => {
+      await agent.delete(`${apiURL}/${item.id}`);
+    });
   });
 
   it('Should return an 201 code if the item was update In DB if The update is Full', async () => {
@@ -27,10 +28,8 @@ describe('/:id Update', () => {
       quality: 35,
       type: 'AGED'
     };
-    await agent.post(`${urlBase}:8080/${api}`, oldItem);
-    const getResponse = await agent.get(`${urlBase}:8080/${api}`);
-    expect(getResponse.body.length).equal(1);
-
+    await agent.post(`${apiURL}`, oldItem);
+    const getResponse = await agent.get(`${apiURL}`);
     const newItem = {
       name: 'Chocolate',
       sellIn: 1,
@@ -38,11 +37,11 @@ describe('/:id Update', () => {
       type: 'LEGENDARY'
     };
     const item = getResponse.body[0];
-    const putResponse = await agent.put(`${urlBase}:8080/${api}/${item.id}`, newItem);
-    expect(putResponse.status).to.equal(statusCode.CREATED);
+    const putResponse = await agent.put(`${apiURL}/${item.id}`, newItem);
 
-    const { body } = await agent.get(`${urlBase}:8080/${api}`);
+    const { body } = await agent.get(`${apiURL}`);
     const itemDB = body[0];
+    expect(putResponse.status).to.equal(statusCode.CREATED);
     expect(itemDB.name).equal(newItem.name);
     expect(itemDB.sellIn).equal(newItem.sellIn);
     expect(itemDB.quality).equal(newItem.quality);
@@ -56,9 +55,8 @@ describe('/:id Update', () => {
       quality: 35,
       type: 'AGED'
     };
-    await agent.post(`${urlBase}:8080/${api}`, oldItem);
-    const getResponse = await agent.get(`${urlBase}:8080/${api}`);
-    expect(getResponse.body.length).equal(1);
+    await agent.post(`${apiURL}`, oldItem);
+    const getResponse = await agent.get(`${apiURL}`);
 
     const newItem = {
       sellIn: 30,
@@ -66,11 +64,12 @@ describe('/:id Update', () => {
       type: 'LEGENDARY'
     };
     const item = getResponse.body[0];
-    const putResponse = await agent.put(`${urlBase}:8080/${api}/${item.id}`, newItem);
-    expect(putResponse.status).to.equal(statusCode.CREATED);
+    const putResponse = await agent.put(`${apiURL}/${item.id}`, newItem);
 
-    const { body } = await agent.get(`${urlBase}:8080/${api}`);
+    const { body } = await agent.get(`${apiURL}`);
     const itemDB = body[0];
+    expect(getResponse.body.length).equal(1);
+    expect(putResponse.status).to.equal(statusCode.CREATED);
     expect(itemDB.name).equal(oldItem.name);
     expect(itemDB.sellIn).equal(newItem.sellIn);
     expect(itemDB.quality).equal(newItem.quality);
@@ -84,23 +83,21 @@ describe('/:id Update', () => {
       quality: 35,
       type: 'AGED'
     };
-    await agent.delete(`${urlBase}:8080/${api}/1200000`, newItem).ok((res) => res.status < 500)
+    await agent.delete(`${apiURL}/1200000`, newItem).ok((res) => res.status < 500)
       .then((response) => {
         expect(response.notFound).equals(true);
       });
   });
 
-  afterEach('Restore Old Data', async () => {
-    const { body } = await agent.get(`${urlBase}:8080/${api}`);
-    for (const item of body) {
-      await agent.delete(`${urlBase}:8080/${api}/${item.id}`);
-    }
-
-    const resp = await agent.get(`${urlBase}:8080/${api}`);
-    expect(resp.body.length).equal(0);
-
-    for (const item of oldData) {
-      await agent.post(`${urlBase}:8080/${api}`, item);
-    }
+  after('Restore Old Data', async () => {
+    const { body } = await agent.get(`${apiURL}`);
+    body.forEach(async (item) => {
+      await agent.delete(`${apiURL}/${item.id}`);
+    });
+    oldData.forEach(async (item) => {
+      await agent.post(`${apiURL}`).send(item);
+    });
+    const getResponse = await agent.get(`${apiURL}`);
+    await Promise.all(getResponse.body);
   });
 });

@@ -3,29 +3,30 @@ const statusCode = require('http-status-codes');
 const { expect } = require('chai').use(require('chai-json-schema'));
 const { listPublicEventsSchema } = require('../schema/ItemsSchema.schema');
 
-const urlBase = 'http://localhost';
-const api = 'api/items';
-let oldData = [];
+const apiURL = 'http://localhost:8080/api/items';
+const oldData = [];
 
 describe('/ GET', () => {
-  beforeEach('Back up old data', async () => {
-    oldData = [];
-
-    const { body } = await agent.get(`${urlBase}:8080/${api}`);
-    for (const item of body) {
-      const oldItem = await agent.delete(`${urlBase}:8080/${api}/${item.id}`);
+  before('', async () => {
+    const { body } = await agent.get(`${apiURL}`);
+    body.forEach(async (item) => {
+      const oldItem = await agent.delete(`${apiURL}/${item.id}`);
       oldData.push(oldItem.body);
-    }
+    });
+  });
 
-    const resp = await agent.get(`${urlBase}:8080/${api}`);
-    expect(resp.body.length).equal(0);
+  beforeEach('Back up old data', async () => {
+    const { body } = await agent.get(`${apiURL}`);
+    body.forEach(async (item) => {
+      await agent.delete(`${apiURL}/${item.id}`);
+    });
   });
 
   it('should return an empty array if the DB is empty', async () => {
-    const response = await agent.get(`${urlBase}:8080/${api}`);
-    expect(response.status).to.equal(statusCode.OK);
-
+    const response = await agent.get(`${apiURL}`);
     const { body } = response;
+
+    expect(response.status).to.equal(statusCode.OK);
     expect(body.length).to.equal(0);
   });
 
@@ -36,12 +37,11 @@ describe('/ GET', () => {
       quality: 35,
       type: 'AGED'
     };
-    await agent.post(`${urlBase}:8080/${api}`, newItem);
-
-    const response = await agent.get(`${urlBase}:8080/${api}`);
-    expect(response.status).to.equal(statusCode.OK);
-
+    await agent.post(`${apiURL}`).send(newItem);
+    const response = await agent.get(`${apiURL}`);
     const { body } = response;
+
+    expect(response.status).to.equal(statusCode.OK);
     body.forEach((item) => {
       expect(item).to.be.jsonSchema(listPublicEventsSchema);
     });
@@ -64,40 +64,36 @@ describe('/ GET', () => {
       quality: 35,
       type: 'NORMAL'
     };
-    await agent.post(`${urlBase}:8080/${api}`, firstNewItem);
-    await agent.post(`${urlBase}:8080/${api}`, secondNewItem);
+    await agent.post(`${apiURL}`).send(firstNewItem);
+    await agent.post(`${apiURL}`).send(secondNewItem);
+    const { body } = await agent.get(`${apiURL}`);
+    const firstItem = body[0];
+    const secondItem = body[1];
 
-    const { body } = await agent.get(`${urlBase}:8080/${api}`);
     expect(body.length).to.equal(2);
-
     body.forEach((item) => {
       expect(item).to.be.jsonSchema(listPublicEventsSchema);
     });
-
-    const firstItem = body[0];
     expect(firstItem.name).equal(firstNewItem.name);
     expect(firstItem.sellIn).equal(firstNewItem.sellIn);
     expect(firstItem.quality).equal(firstNewItem.quality);
     expect(firstItem.type).equal(firstNewItem.type);
 
-    const secondItem = body[1];
     expect(secondItem.name).equal(secondNewItem.name);
     expect(secondItem.sellIn).equal(secondNewItem.sellIn);
     expect(secondItem.quality).equal(secondNewItem.quality);
     expect(secondItem.type).equal(secondNewItem.type);
   });
 
-  afterEach('Restore Old Data', async () => {
-    const { body } = await agent.get(`${urlBase}:8080/${api}`);
-    for (const item of body) {
-      await agent.delete(`${urlBase}:8080/${api}/${item.id}`);
-    }
-
-    const resp = await agent.get(`${urlBase}:8080/${api}`);
-    expect(resp.body.length).equal(0);
-
-    for (const item of oldData) {
-      await agent.post(`${urlBase}:8080/${api}`, item);
-    }
+  after('Restore Old Data', async () => {
+    const { body } = await agent.get(`${apiURL}`);
+    body.forEach(async (item) => {
+      await agent.delete(`${apiURL}/${item.id}`);
+    });
+    oldData.forEach(async (item) => {
+      await agent.post(`${apiURL}`).send(item);
+    });
+    const getResponse = await agent.get(`${apiURL}`);
+    await Promise.all(getResponse.body);
   });
 });
