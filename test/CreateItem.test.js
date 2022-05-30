@@ -4,12 +4,14 @@ const chai = require('chai');
 
 const { expect } = chai;
 
+const apiURL = 'http://localhost:8081/api/items';
+
 describe('Create Item Api Tests with query parameters', () => {
   before('Before POST Api test', async () => {
-    const response = await agent.get('http://localhost:8080/api/items');
+    const response = await agent.get(`${apiURL}`);
     if (response.body.length > 0) {
       response.body.forEach(async (element) => {
-        await agent.delete(`http://localhost:8080/api/items/${element.id}`);
+        await agent.delete(`${apiURL}/${element.id}`);
       });
     }
   });
@@ -21,7 +23,7 @@ describe('Create Item Api Tests with query parameters', () => {
       quality: 35,
       type: 'NORMAL'
     };
-    const response = await agent.post('http://localhost:8080/api/items').send(item);
+    const response = await agent.post(`${apiURL}`).send(item);
     expect(response.status).to.equal(statusCode.CREATED);
     expect(response.body.name).to.equal(item.name);
   });
