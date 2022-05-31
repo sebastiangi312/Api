@@ -12,12 +12,18 @@ describe('/:id Update', () => {
       const oldItem = await agent.delete(`${apiURL}/${item.id}`);
       oldData.push(oldItem.body);
     });
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1500);
+    });
   });
 
   beforeEach('Back up old data', async () => {
     const { body } = await agent.get(`${apiURL}`);
     body.forEach(async (item) => {
       await agent.delete(`${apiURL}/${item.id}`);
+    });
+    await new Promise((resolve) => {
+      setTimeout(resolve, 500);
     });
   });
 
