@@ -13,6 +13,8 @@ describe('/ GET', () => {
       const oldItem = await agent.delete(`${apiURL}/${item.id}`);
       oldData.push(oldItem.body);
     });
+    const getResponse = await agent.get(`${apiURL}`);
+    await Promise.all(getResponse.body);
   });
 
   beforeEach('Back up old data', async () => {
@@ -20,6 +22,8 @@ describe('/ GET', () => {
     body.forEach(async (item) => {
       await agent.delete(`${apiURL}/${item.id}`);
     });
+    const getResponse = await agent.get(`${apiURL}`);
+    await Promise.all(getResponse.body);
   });
 
   it('should return an empty array if the DB is empty', async () => {

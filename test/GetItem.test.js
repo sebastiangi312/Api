@@ -13,6 +13,8 @@ describe('Get Item Api Tests with query parameters', () => {
         await agent.delete(`${apiURL}/${element.id}`);
       });
     }
+    const getResponse = await agent.get(`${apiURL}`);
+    await Promise.all(getResponse.body);
   });
 
   it('Consume GET Service with item', async () => {

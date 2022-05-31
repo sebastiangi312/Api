@@ -12,9 +12,8 @@ describe('/quality POST', () => {
       const oldItem = await agent.delete(`${apiURL}/${item.id}`);
       oldData.push(oldItem.body);
     });
-    await new Promise((resolve) => {
-      setTimeout(resolve, 1500);
-    });
+    const getResponse = await agent.get(`${apiURL}`);
+    await Promise.all(getResponse.body);
   });
 
   beforeEach('Back up old data', async () => {
@@ -22,9 +21,8 @@ describe('/quality POST', () => {
     body.forEach(async (item) => {
       await agent.delete(`${apiURL}/${item.id}`);
     });
-    await new Promise((resolve) => {
-      setTimeout(resolve, 500);
-    });
+    const getResponse = await agent.get(`${apiURL}`);
+    await Promise.all(getResponse.body);
   });
 
   it('should reduce quality and sellIn if the item Type is Normal', async () => {
@@ -99,5 +97,7 @@ describe('/quality POST', () => {
     oldData.forEach(async (item) => {
       await agent.post(`${apiURL}`).send(item);
     });
+    const getResponse = await agent.get(`${apiURL}`);
+    await Promise.all(getResponse.body);
   });
 });

@@ -15,6 +15,8 @@ describe('/:id Update', () => {
     await new Promise((resolve) => {
       setTimeout(resolve, 1500);
     });
+    const getResponse = await agent.get(`${apiURL}`);
+    await Promise.all(getResponse.body);
   });
 
   beforeEach('Back up old data', async () => {
@@ -25,6 +27,8 @@ describe('/:id Update', () => {
     await new Promise((resolve) => {
       setTimeout(resolve, 500);
     });
+    const getResponse = await agent.get(`${apiURL}`);
+    await Promise.all(getResponse.body);
   });
 
   it('Should return an 201 code if the item was update In DB if The update is Full', async () => {
