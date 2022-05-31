@@ -2,7 +2,7 @@ const agent = require('superagent');
 const statusCode = require('http-status-codes');
 const { expect } = require('chai').use(require('chai-json-schema'));
 
-const apiURL = 'http://api:8081/api/items';
+const apiURL = 'http://localhost:8081/api/items';
 const oldData = [];
 
 describe('/quality POST', () => {

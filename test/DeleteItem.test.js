@@ -4,7 +4,7 @@ const chai = require('chai');
 
 const { expect } = chai;
 
-const apiURL = 'http://api:8081/api/items';
+const apiURL = 'http://localhost:8081/api/items';
 
 describe('Delete Item Api Tests with query parameters', () => {
   before('Before DELETE Api test', async () => {
