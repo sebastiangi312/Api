@@ -12,9 +12,16 @@ pipeline {
             }
         }
 
-        stage('Running Tests'){
+        stage('Configuring Node'){
             steps {
+                sh 'apt update -y'
+                sh 'apt install -y'
                 sh 'npm install'
+            }
+        }
+
+        stage('Run test'){
+            steps {
                 sh 'npm run test'
             }
         }
