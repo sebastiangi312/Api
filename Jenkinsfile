@@ -14,9 +14,9 @@ pipeline {
 
         stage('Configuring Node'){
             steps {
-                sh 'apt update -y'
-                sh 'apt install -y'
-                sh 'npm install'
+                sh 'su apt update -y'
+                sh 'su apt install -y'
+                sh 'su npm install'
             }
         }
 
