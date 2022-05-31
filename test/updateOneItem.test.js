@@ -30,13 +30,14 @@ describe('/:id Update', () => {
     };
     await agent.post(`${apiURL}`, oldItem);
     const getResponse = await agent.get(`${apiURL}`);
+    const item = getResponse.body[0];
     const newItem = {
+      id: item.id,
       name: 'Chocolate',
       sellIn: 1,
       quality: 10,
       type: 'LEGENDARY'
     };
-    const item = getResponse.body[0];
     const putResponse = await agent.put(`${apiURL}/${item.id}`, newItem);
 
     const { body } = await agent.get(`${apiURL}`);
@@ -57,13 +58,13 @@ describe('/:id Update', () => {
     };
     await agent.post(`${apiURL}`, oldItem);
     const getResponse = await agent.get(`${apiURL}`);
-
+    const item = getResponse.body[0];
     const newItem = {
+      id: item.id,
       sellIn: 30,
       quality: 10,
       type: 'LEGENDARY'
     };
-    const item = getResponse.body[0];
     const putResponse = await agent.put(`${apiURL}/${item.id}`, newItem);
 
     const { body } = await agent.get(`${apiURL}`);
