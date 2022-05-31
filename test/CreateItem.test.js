@@ -4,7 +4,7 @@ const chai = require('chai');
 
 const { expect } = chai;
 
-const apiURL = 'http://localhost:8081/api/items';
+const apiURL = 'http://api:8081/api/items';
 
 describe('Create Item Api Tests with query parameters', () => {
   before('Before POST Api test', async () => {

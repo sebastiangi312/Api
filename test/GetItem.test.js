@@ -3,7 +3,7 @@ const statusCode = require('http-status-codes');
 const chai = require('chai');
 
 const { expect } = chai;
-const apiURL = 'http://localhost:8081/api/items';
+const apiURL = 'http://api:8081/api/items';
 
 describe('Get Item Api Tests with query parameters', () => {
   before('Before GET Api test', async () => {
