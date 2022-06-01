@@ -15,6 +15,9 @@ describe('/ GET', () => {
     });
     const getResponse = await agent.get(`${apiURL}`);
     await Promise.all(getResponse.body);
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000);
+    });
   });
 
   beforeEach('Back up old data', async () => {

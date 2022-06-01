@@ -21,6 +21,9 @@ describe('/quality POST', () => {
     body.forEach(async (item) => {
       await agent.delete(`${apiURL}/${item.id}`);
     });
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000);
+    });
     const getResponse = await agent.get(`${apiURL}`);
     await Promise.all(getResponse.body);
   });

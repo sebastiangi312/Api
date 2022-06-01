@@ -19,6 +19,9 @@ describe('Create Item Api Tests with query parameters', () => {
     }
     const getResponse = await agent.get(`${apiURL}`);
     await Promise.all(getResponse.body);
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000);
+    });
   });
 
   it('Consume POST Service with item', async () => {
