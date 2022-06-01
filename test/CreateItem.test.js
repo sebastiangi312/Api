@@ -8,9 +8,6 @@ const apiURL = 'http://localhost:8081/api/items';
 
 describe('Create Item Api Tests with query parameters', () => {
   before('Before POST Api test', async () => {
-    await new Promise((resolve) => {
-      setTimeout(resolve, 30000);
-    });
     const response = await agent.get(`${apiURL}`);
     if (response.body.length > 0) {
       response.body.forEach(async (element) => {
