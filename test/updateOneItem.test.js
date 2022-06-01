@@ -12,9 +12,6 @@ describe('/:id Update', () => {
       const oldItem = await agent.delete(`${apiURL}/${item.id}`);
       oldData.push(oldItem.body);
     });
-    await new Promise((resolve) => {
-      setTimeout(resolve, 1500);
-    });
     const getResponse = await agent.get(`${apiURL}`);
     await Promise.all(getResponse.body);
   });
